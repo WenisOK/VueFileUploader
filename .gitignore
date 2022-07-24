@@ -1,6 +1,6 @@
 .vscode
 dist
-node_modules
 package-lock.json
 server/fileList.json
 server/files/*
+*/node_modules
