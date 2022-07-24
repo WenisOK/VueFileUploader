@@ -1,0 +1,56 @@
+body {
+  margin: 0;
+  user-select: none;
+}
+.topBar {
+  height: 54px;
+  font-size: 24px;
+  color: white;
+  text-align: center;
+  line-height: 54px;
+  min-width: 370px;
+  background-color: #2c313c;
+}
+
+.container {
+  max-width: 520px;
+  min-width: 370px;
+  margin: 50px auto;
+  border: dotted 2px gray;
+  border-radius: 10px;
+}
+
+.fileTitle {
+  color: #333;
+  font-weight: normal;
+  padding: 10px;
+  font-size: 20px;
+}
+
+#chooseFile {
+  width: 100px;
+  height: 35px;
+  background-color: #12b7f5;
+  color: white;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  border: none;
+  margin: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.fileInfo {
+  padding: 10px;
+}
+
+#progress {
+  height: 20px;
+  width: 400px;
+}
+
+.progressDiv {
+  margin: 10px;
+  line-height: 10px;
+}
