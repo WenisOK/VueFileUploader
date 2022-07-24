@@ -56,6 +56,9 @@ onMounted(() => {
       fileInfo.value.type = e.target.files[0].type;
       fileInfo.value.lastModified = e.target.files[0].lastModified;
     }
+    fileInfo.value.progress = 0;
+    refProgress.value.value = 0;
+    refProgress.value.max = 0;
   });
 });
 const upload = () => {

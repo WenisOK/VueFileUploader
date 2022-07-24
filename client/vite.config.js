@@ -8,7 +8,9 @@ export default defineConfig({
   server: {
     proxy: {
       "/upload": "http://localhost:2222",
-      // rewrite: path = path.replace("\/")
+      "/fileList":"http://localhost:2222",
+      "/downloadFile":"http://localhost:2222",
+      "deleteFile":"http://localhost:2222"
     },
   },
 });

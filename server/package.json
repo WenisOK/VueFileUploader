@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "serve": "node ."
+    "dev": "node ."
   },
   "dependencies": {
     "express": "^4.18.1"
