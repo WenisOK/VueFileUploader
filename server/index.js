@@ -33,14 +33,14 @@ app.use((req, res, next) => {
     req.body,
     req.headers
   );
-  next();
+  next()
 });
 
 app.get("/fileList", (req, res) => {
   res.send(fileList);
 });
 
-app.post("/deleteFile", (req, res) => {
+app.post("/deleteFile", (req, res, next) => {
   if (req.body.fileId) {
     let flag = false;
     let index;
@@ -52,9 +52,13 @@ app.post("/deleteFile", (req, res) => {
       }
     }
     if (flag) {
-      fs.unlinkSync(path.normalize(path.resolve(path.join(__dirname, `./files/${req.body.fileId}`))));
-      fileList.splice(index, 1);
-      res.send({ status: 1 });
+      try {
+        fs.unlinkSync(path.normalize(path.resolve(path.join(__dirname, `./files/${req.body.fileId}`))));
+        fileList.splice(index, 1);
+        res.send({ status: 1 });
+      } catch (e) {
+        next(e);
+      }
     } else {
       res.send({ status: 0 });
     }
@@ -72,7 +76,11 @@ app.get("/downloadFile", (req, res) => {
         "Content-Disposition",
         `attachment; filename=${file.fileNameWithExt}`
       );
-      fs.createReadStream(path.normalize(path.resolve(path.join(__dirname, `./files/${req.query.fileId}`)))).pipe(res);
+      try {
+        fs.createReadStream(path.normalize(path.resolve(path.join(__dirname, `./files/${req.query.fileId}`)))).pipe(res);
+      } catch (e) {
+        next(e);
+      }
     } else {
       res.send("<h2>no such file</h2>");
     }
@@ -100,8 +108,10 @@ app.post("/upload", (req, res) => {
     );
     let recvBinaryLength = 0;
     let recvFileLength = 0;
+    let recvFlag = true;
     const stream = fs.createWriteStream(`./files/${fileId}`, { flags: "w+" });
     req.on("data", (chunk) => {
+      if (!recvFlag) return;
       // recv data length not more than header data length
       if (recvBinaryLength + chunk.length < calcLength) {
         recvBinaryLength += chunk.length;
@@ -115,10 +125,16 @@ app.post("/upload", (req, res) => {
         let piece = chunk.slice(start, end);
         recvFileLength += piece.length;
         recvBinaryLength += chunk.length;
-        stream.write(piece);
+        stream.write(piece, e => {
+          if (e) {
+            recvFlag = false;
+            next(e);
+          }
+        });
       }
     });
     req.on("end", () => {
+      if (!recvFlag) return;
       stream.end();
       fileList.push({
         fileId: fileId,
@@ -132,6 +148,18 @@ app.post("/upload", (req, res) => {
     res.send({ status: -999 });
   }
 });
+
+app.use((req,res)=>{
+  res.status(404);
+  res.send({status:-2});
+});
+
+app.use((error,req,res,next)=>{
+  res.status(500);
+  res.send({status:-1});
+  console.log(error);
+})
+
 http.createServer(app).listen(2222, () => {
   console.log("server started");
   setInterval(() => {
