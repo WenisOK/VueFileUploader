@@ -27,6 +27,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import typeList from "./type";
+
 const fileInfo = ref({
   name: "",
   viewSize: "",
@@ -37,9 +38,11 @@ const fileInfo = ref({
   progress: 0,
   lastModified: null,
 });
+
 const refInput = ref();
 const refProgress = ref();
 const uploading = ref(false);
+
 const chooseFile = () => refInput.value.click();
 onMounted(() => {
   refInput.value.addEventListener("change", (e) => {
@@ -55,15 +58,19 @@ onMounted(() => {
     }
   });
 });
+
 const upload = () => {
   if (refInput.value.files.length < 1) {
     return alert("文件未选择");
   }
+
   fileInfo.value.status = "发送中";
+
   let formData = new FormData();
   formData.append("file", refInput.value.files[0]);
   const xhr = new XMLHttpRequest();
   uploading.value = true;
+
   xhr.onreadystatechange = () => {
     console.log(xhr);
     const response = JSON.parse(xhr.response);
@@ -78,19 +85,23 @@ const upload = () => {
       fileInfo.value.progress = 0;
     }
   };
+
   xhr.upload.onprogress = (e) => {
     refProgress.value.max = e.total;
     refProgress.value.value = e.loaded;
     fileInfo.value.progress = parseInt((e.loaded / e.total) * 100);
   };
+
   xhr.open(
     "POST",
     `/upload?filename=${fileInfo.value.name}&type=${
       fileInfo.value.type ? fileInfo.value.type : "unknow"
     }&size=${fileInfo.value.size}&lastModified=${fileInfo.value.lastModified}`
   );
+
   xhr.send(formData);
 };
+
 const getFileTypes = (e) => {
   if (e) return typeList[e] === undefined ? e : typeList[e];
   return "未知类型";
