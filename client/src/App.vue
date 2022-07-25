@@ -54,8 +54,10 @@ onMounted(() => {
       fileInfo.value.lastModified = event.lastModified;
       fileInfo.value.viewSize = (event.size / 1024 / 1024).toFixed(5) + "Mib";
       fileInfo.value.viewType = getFileTypes(event.type);
-      refProgress.value.max = fileInfo.value.size;
     }
+    fileInfo.value.progress = 0;
+    refProgress.value.value = 0;
+    refProgress.value.max = 0;
   });
 });
 
@@ -73,16 +75,14 @@ const upload = () => {
 
   xhr.onreadystatechange = () => {
     console.log(xhr);
-    const response = JSON.parse(xhr.response);
     if (xhr.readyState === 4) {
+      const response = JSON.parse(xhr.response);
       if (xhr.status === 200 && response.status === 1) {
         fileInfo.value.status = "上传成功";
       } else {
         fileInfo.value.status = "上传失败";
       }
       uploading.value = false;
-      refProgress.value.value = 0;
-      fileInfo.value.progress = 0;
     }
   };
 
@@ -101,7 +101,7 @@ const upload = () => {
 
   xhr.send(formData);
 };
-
+// 文件类型
 const getFileTypes = (e) => {
   if (e) return typeList[e] === undefined ? e : typeList[e];
   return "未知类型";
