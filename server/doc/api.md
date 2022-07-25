@@ -36,3 +36,7 @@
   let formData = new FormData();
   formData.append("file", FILE_OBJECT); // "file" -- first argument could not be replace by any other string
 ```
+#### `response` type:`JSON`:
+- `success`: `{status:1}`
+- `failed`: 
+  - `{status:-999}` cause by parameter not be given correctly
