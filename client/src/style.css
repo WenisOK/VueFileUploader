@@ -27,7 +27,8 @@ body {
   font-size: 20px;
 }
 
-#chooseFile {
+#chooseFile,
+#uploadFile {
   width: 100px;
   height: 35px;
   background-color: #12b7f5;
@@ -41,6 +42,10 @@ body {
   cursor: pointer;
 }
 
+#uploadFile[disabled] {
+  background-color: gray;
+  cursor: no-drop;
+}
 .fileInfo {
   padding: 10px;
 }

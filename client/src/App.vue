@@ -13,7 +13,7 @@
         <div>文件类型: {{ fileInfo.viewType }}</div>
         <div>上传状态: {{ fileInfo.status }}</div>
       </div>
-      <button id="chooseFile" :disabled="uploading" @click="upload">
+      <button id="uploadFile" :disabled="uploading" @click="upload">
         上传
       </button>
       <br />
@@ -25,7 +25,6 @@
   </div>
 </template>
 <script setup>
-// 引入一些
 import { ref, onMounted } from "vue";
 import typeList from "./type";
 const fileInfo = ref({
@@ -34,31 +33,26 @@ const fileInfo = ref({
   size: null,
   viewType: "",
   type: null,
-  status: "",
+  status: "未开始",
   progress: 0,
   lastModified: null,
 });
 const refInput = ref();
 const refProgress = ref();
 const uploading = ref(false);
-const chooseFile = () => {
-  refInput.value.click();
-};
+const chooseFile = () => refInput.value.click();
 onMounted(() => {
-  // 监听文件改变事件
   refInput.value.addEventListener("change", (e) => {
-    if (e.target.files[0]) {
-      fileInfo.value.name = e.target.files[0].name;
-      fileInfo.value.viewSize =
-        (e.target.files[0].size / 1024 / 1024).toFixed(5) + "MB";
-      fileInfo.value.size = e.target.files[0].size;
-      fileInfo.value.viewType = getFileTypes(e.target.files[0].type);
-      fileInfo.value.type = e.target.files[0].type;
-      fileInfo.value.lastModified = e.target.files[0].lastModified;
+    let event = e.target.files[0];
+    if (event) {
+      fileInfo.value.name = event.name;
+      fileInfo.value.size = event.size;
+      fileInfo.value.type = event.type;
+      fileInfo.value.lastModified = event.lastModified;
+      fileInfo.value.viewSize = (event.size / 1024 / 1024).toFixed(5) + "Mib";
+      fileInfo.value.viewType = getFileTypes(event.type);
+      refProgress.value.max = fileInfo.value.size;
     }
-    fileInfo.value.progress = 0;
-    refProgress.value.value = 0;
-    refProgress.value.max = 0;
   });
 });
 const upload = () => {
@@ -68,17 +62,20 @@ const upload = () => {
   fileInfo.value.status = "发送中";
   let formData = new FormData();
   formData.append("file", refInput.value.files[0]);
-  uploading.value = true;
   const xhr = new XMLHttpRequest();
+  uploading.value = true;
   xhr.onreadystatechange = () => {
+    console.log(xhr);
+    const response = JSON.parse(xhr.response);
     if (xhr.readyState === 4) {
-      const response = JSON.parse(xhr.response);
-      if (response.status === 1) {
-        fileInfo.value.status = "成功";
+      if (xhr.status === 200 && response.status === 1) {
+        fileInfo.value.status = "上传成功";
       } else {
-        fileInfo.value.status = "失败";
+        fileInfo.value.status = "上传失败";
       }
       uploading.value = false;
+      refProgress.value.value = 0;
+      fileInfo.value.progress = 0;
     }
   };
   xhr.upload.onprogress = (e) => {
@@ -94,7 +91,6 @@ const upload = () => {
   );
   xhr.send(formData);
 };
-// 文件类型
 const getFileTypes = (e) => {
   if (e) return typeList[e] === undefined ? e : typeList[e];
   return "未知类型";
