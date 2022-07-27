@@ -2,7 +2,6 @@
   <div>
     <Upload @update-file-list="updateFileList" />
     <Lists ref="ListsRef" />
-    <el-button @click="updateFileList">111</el-button>
   </div>
 </template>
 <script setup>
