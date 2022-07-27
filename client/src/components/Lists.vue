@@ -58,6 +58,6 @@ function getFileList() {
 
 onMounted(() => {
   getFileList();
-  // setInterval(() => getFileList(), 5000);
+  setInterval(() => getFileList(), 5000);
 });
 </script>
