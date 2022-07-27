@@ -31,18 +31,19 @@ defineExpose({
 
 const tableData = reactive([]);
 
-function getFileList(empty = false) {
-  if (empty)
-    Object.keys(tableData).map((key) => {
-      delete tableData[key];
-    });
+let fileListBak = "";
+
+function getFileList() {
   axios({
     method: "GET",
     url: "/fileList",
   }).then((res) => {
-    console.log(res.data);
     if (res.status === 200) {
-      if (res.data.length !== 0) {
+      if (JSON.stringify(res.data) !== fileListBak) {
+        console.log("数据有变化");
+        Object.keys(tableData).map((key) => {
+          delete tableData[key];
+        });
         for (let i = 0; i < res.data.length; i++) {
           const result = {
             name: res.data[i].fileNameWithExt,
@@ -52,6 +53,9 @@ function getFileList(empty = false) {
           };
           tableData[i] = result;
         }
+        fileListBak = JSON.stringify(res.data);
+      } else {
+        console.log("数据无变化");
       }
     }
   });
