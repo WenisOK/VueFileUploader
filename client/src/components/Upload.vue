@@ -57,7 +57,10 @@ const refInput = ref();
 const refProgress = ref();
 const uploading = ref(false);
 
-const chooseFile = () => refInput.value.click();
+const chooseFile = () => {
+  refInput.value.click();
+  fileInfo.value.status = "未开始";
+};
 onMounted(() => {
   refInput.value.addEventListener("change", (e) => {
     let event = e.target.files[0];

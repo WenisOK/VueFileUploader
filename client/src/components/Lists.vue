@@ -31,10 +31,11 @@ defineExpose({
 
 const tableData = reactive([]);
 
-function getFileList() {
-  Object.keys(tableData).map((key) => {
-    delete tableData[key];
-  });
+function getFileList(empty = false) {
+  if (empty)
+    Object.keys(tableData).map((key) => {
+      delete tableData[key];
+    });
   axios({
     method: "GET",
     url: "/fileList",
