@@ -5,7 +5,7 @@
     </div>
     <div class="container">
       <div class="fileTitle">文件信息</div>
-      <input type="file" ref="refInput" style="display: none" />
+      <input type="file" multiple ref="refInput" style="display: none" />
       <el-button
         type="primary"
         :icon="DocumentAdd"
