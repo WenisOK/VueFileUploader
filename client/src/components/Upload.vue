@@ -36,7 +36,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, defineEmits } from "vue";
+import { ref, onMounted } from "vue";
 import { DocumentAdd, Upload } from "@element-plus/icons-vue";
 import typeList from "../type";
 

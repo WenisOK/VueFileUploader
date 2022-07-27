@@ -17,7 +17,6 @@
 <script setup>
 import { Download, Delete } from "@element-plus/icons-vue";
 import axios from "axios";
-import { defineProps, defineEmits } from "vue";
 const props = defineProps({
   uuid: {
     type: String,
