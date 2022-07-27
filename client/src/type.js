@@ -30,4 +30,6 @@ export default {
     "电子表格",
   "application/pdf": "PDF文件",
   "text/xml": "XML文档",
+  "application/x-zip-compressed": "ZIP压缩包",
+  "audio/x-m4a": "M4A音频",
 };

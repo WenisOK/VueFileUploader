@@ -16,7 +16,7 @@ body {
   max-width: 520px;
   min-width: 370px;
   margin: 50px auto;
-  border: dotted 2px gray;
+  border: dotted 2px #cdcdcd;
   border-radius: 10px;
 }
 
@@ -29,33 +29,39 @@ body {
 
 #chooseFile,
 #uploadFile {
-  width: 100px;
-  height: 35px;
-  background-color: #12b7f5;
-  color: white;
-  appearance: none;
-  -webkit-appearance: none;
-  outline: none;
-  border: none;
-  margin: 10px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-#uploadFile[disabled] {
-  background-color: gray;
-  cursor: no-drop;
+  margin-left: 20px;
 }
 .fileInfo {
   padding: 10px;
+  border: 2px #cdcdcd dotted;
+  margin: 10px;
+  border-radius: 15px;
 }
 
 #progress {
   height: 20px;
-  width: 400px;
+  width: 450px;
 }
 
 .progressDiv {
   margin: 10px;
   line-height: 10px;
+}
+
+.listsTable {
+  max-width: 520px;
+  min-width: 370px;
+  margin: 10px auto;
+}
+
+.listsTable * {
+  text-align: center;
+}
+
+.operationButton {
+  margin: 2px 0 !important;
+}
+
+a {
+  text-decoration: none;
 }
