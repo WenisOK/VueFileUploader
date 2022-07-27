@@ -6,3 +6,4 @@ server/files/*
 */node_modules
 yarn-error.log
 node_modules
+package.json
