@@ -1,6 +1,7 @@
 body {
   margin: 0;
   user-select: none;
+  background-color: #eee;
 }
 .topBar {
   height: 54px;
@@ -12,12 +13,14 @@ body {
   background-color: #2c313c;
 }
 
-.container {
+.FileUpload {
   max-width: 520px;
   min-width: 370px;
   margin: 50px auto;
-  border: dotted 2px #cdcdcd;
   border-radius: 10px;
+  box-shadow: 0 0 10px -6px gray;
+  background-color: #fff;
+  width: 100%;
 }
 
 .fileTitle {
@@ -40,8 +43,10 @@ body {
 
 #progress {
   height: 20px;
-  width: 310px;
+  min-width: 350px;
+  max-width: 500px;
   margin: 10px;
+  width: 100%;
 }
 
 .progressDiv {
@@ -60,6 +65,9 @@ body {
   max-width: 520px;
   min-width: 370px;
   margin: 10px auto;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px -6px gray;
 }
 
 .listsTable * {

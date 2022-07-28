@@ -34,7 +34,6 @@ const deleteFile = () => {
     },
   }).then((res) => {
     if (res.data.status) {
-      alert("删除成功！");
       emit("getFileList");
     }
   });
