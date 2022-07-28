@@ -106,10 +106,12 @@ app.post("/upload", (req, res) => {
       + 14 + Buffer.from(req.query.type ? req.query.type : "application/octet-stream").length + 2 // Content-Type: $type\r\n
       + 2 // \r\n
     );
+    
     let recvBinaryLength = 0;
     let recvFileLength = 0;
     let recvFlag = true;
-    const stream = fs.createWriteStream(`./files/${fileId}`, { flags: "w+" });
+    const stream = fs.createWriteStream(path.normalize(path.resolve(path.join(__dirname, `./files/${fileId}`))), { flags: "w+" });
+    
     req.on("data", (chunk) => {
       if (!recvFlag) return;
       // recv data length not more than header data length
@@ -133,6 +135,13 @@ app.post("/upload", (req, res) => {
         });
       }
     });
+
+    req.on("error", () => {
+      // request is canceled or request is aborted
+      stream.end();
+      fs.unlinkSync(path.normalize(path.resolve(path.join(__dirname, `./files/${fileId}`))));
+    });
+
     req.on("end", () => {
       if (!recvFlag) return;
       stream.end();
@@ -149,14 +158,14 @@ app.post("/upload", (req, res) => {
   }
 });
 
-app.use((req,res)=>{
+app.use((req, res) => {
   res.status(404);
-  res.send({status:-2});
+  res.send({ status: -2 });
 });
 
-app.use((error,req,res,next)=>{
+app.use((error, req, res, next) => {
   res.status(500);
-  res.send({status:-1});
+  res.send({ status: -1 });
   console.log(error);
 })
 
