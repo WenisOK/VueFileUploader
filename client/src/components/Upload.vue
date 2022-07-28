@@ -31,8 +31,6 @@
       <div class="progressDiv">
         <el-progress
           id="progress"
-          :text-inside="true"
-          :status="fileInfo.progressStatus"
           :percentage="fileInfo.progressPercentage"
         ></el-progress>
       </div>
@@ -53,7 +51,6 @@ const fileInfo = reactive({
   type: null,
   status: "未开始",
   lastModified: null,
-  progressStatus: "",
   progressPercentage: 0,
 });
 
@@ -77,7 +74,6 @@ onMounted(() => {
       fileInfo.viewType = getFileTypes(event.type);
       fileInfo.status = "未开始";
       fileInfo.progressPercentage = 0;
-      fileInfo.progressStatus = "";
     }
   });
 });
@@ -109,7 +105,6 @@ function upload() {
     if (res.data.status === 1) {
       uploading.value = false;
       fileInfo.status = "上传成功";
-      fileInfo.progressStatus = "success";
       refInput.value.value = "";
       emit("updateFileList");
     }
@@ -117,7 +112,7 @@ function upload() {
 }
 
 function uploadProgress(e) {
-  fileInfo.progressPercentage = (e.loaded / e.total) * 100;
+  fileInfo.progressPercentage = parseInt((e.loaded / e.total) * 100);
 }
 
 function getFileTypes(e) {
