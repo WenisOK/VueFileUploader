@@ -2,8 +2,8 @@
 
 ## 开发人员
 
-[@WenisOK](/Wenisok)  
-[@iy88](/iy88)
+[@WenisOK](https://github.com/Wenisok)  
+[@iy88](https://github.com/iy88)
 
 ## 使用文档
 
