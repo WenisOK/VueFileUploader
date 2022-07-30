@@ -7,15 +7,16 @@ let app = express();
 
 // initialize fileList memory database
 let lastFileList = "";
+const filesPath = path.normalize(path.resolve(path.join(__dirname, "./files")));
 let fileList;
 try {
-  fileList = JSON.parse(fs.readFileSync(path.normalize(path.resolve(path.join(__dirname, "./fileList.json")))));
+  fileList = JSON.parse(fs.readFileSync(path.normalize(path.relsolve(path.join(__dirname,"./fileList.json")))));
 } catch {
   fileList = [];
 }
 // initialize files folder
 try {
-  fs.mkdirSync(path.normalize(path.resolve(path.join(__dirname, "./files"))));
+  fs.mkdirSync(filesPath);
 } catch {
   // folder is already existed, do nothing...
 }
@@ -53,7 +54,7 @@ app.post("/deleteFile", (req, res, next) => {
     }
     if (flag) {
       try {
-        fs.unlinkSync(path.normalize(path.resolve(path.join(__dirname, `./files/${req.body.fileId}`))));
+        fs.unlinkSync(path.normalize(path.resolve(path.join(filesPath`./${req.body.fileId}`))));
         fileList.splice(index, 1);
         res.send({ status: 1 });
       } catch (e) {
@@ -67,7 +68,7 @@ app.post("/deleteFile", (req, res, next) => {
   }
 })
 
-app.get("/downloadFile", (req, res) => {
+app.get("/downloadFile", (req, res, next) => {
   if (req.query.fileId) {
     let file = fileList.find((file) => file.fileId === req.query.fileId);
     if (file) {
@@ -77,7 +78,7 @@ app.get("/downloadFile", (req, res) => {
         `attachment; filename=${file.fileNameWithExt}`
       );
       try {
-        fs.createReadStream(path.normalize(path.resolve(path.join(__dirname, `./files/${req.query.fileId}`)))).pipe(res);
+        fs.createReadStream(path.normalize(path.resolve(path.join(filesPath, `./${req.query.fileId}`)))).pipe(res);
       } catch (e) {
         next(e);
       }
@@ -89,7 +90,7 @@ app.get("/downloadFile", (req, res) => {
   }
 });
 
-app.post("/upload", (req, res) => {
+app.post("/upload", (req, res, next) => {
   if (
     req.query.filename &&
     req.query.type &&
@@ -106,12 +107,12 @@ app.post("/upload", (req, res) => {
       + 14 + Buffer.from(req.query.type ? req.query.type : "application/octet-stream").length + 2 // Content-Type: $type\r\n
       + 2 // \r\n
     );
-    
+
     let recvBinaryLength = 0;
     let recvFileLength = 0;
     let recvFlag = true;
-    const stream = fs.createWriteStream(path.normalize(path.resolve(path.join(__dirname, `./files/${fileId}`))), { flags: "w+" });
-    
+    const stream = fs.createWriteStream(path.normalize(path.resolve(path.join(filesPath, `./${fileId}`))), { flags: "w+" });
+
     req.on("data", (chunk) => {
       if (!recvFlag) return;
       // recv data length not more than header data length
@@ -139,7 +140,7 @@ app.post("/upload", (req, res) => {
     req.on("error", () => {
       // request is canceled or request is aborted
       stream.end();
-      fs.unlinkSync(path.normalize(path.resolve(path.join(__dirname, `./files/${fileId}`))));
+      fs.unlinkSync(path.normalize(path.resolve(path.join(filesPath, `./${fileId}`))));
     });
 
     req.on("end", () => {
