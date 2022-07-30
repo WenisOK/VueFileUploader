@@ -27,6 +27,11 @@
         @click="upload"
         >上传
       </el-button>
+      <el-button
+        :disabled="fileInfo.abortController === null ? true : false"
+        @click="cancleUpload"
+        >取消上传</el-button
+      >
       <br />
       <div class="progressDiv">
         <el-progress
@@ -52,6 +57,7 @@ const fileInfo = reactive({
   status: "未开始",
   lastModified: null,
   progressPercentage: 0,
+  abortController: null,
 });
 
 const emit = defineEmits(["updateFileList"]);
@@ -88,11 +94,13 @@ function upload() {
   let formData = new FormData();
   formData.append("file", refInput.value.files[0]);
 
-  uploading.value = true;
+  fileInfo.abortController = new AbortController();
 
+  uploading.value = true;
   axios({
     method: "POST",
     url: "/upload",
+    signal: fileInfo.abortController.signal,
     params: {
       filename: fileInfo.name,
       size: fileInfo.size,
@@ -101,14 +109,31 @@ function upload() {
     },
     data: formData,
     onUploadProgress: uploadProgress,
-  }).then((res) => {
-    if (res.data.status === 1) {
-      uploading.value = false;
-      fileInfo.status = "上传成功";
-      refInput.value.value = "";
-      emit("updateFileList");
-    }
-  });
+  })
+    .then((res) => {
+      if (res.data.status === 1) {
+        uploading.value = false;
+        fileInfo.status = "上传成功";
+        refInput.value.value = "";
+        emit("updateFileList");
+      }
+    })
+    .catch((err) => {
+      if (err == "CanceledError: canceled") {
+        alert("取消上传");
+      }
+    });
+}
+
+function cancleUpload() {
+  if (fileInfo.abortController === null) {
+    return;
+  }
+  fileInfo.abortController.abort();
+  fileInfo.abortController = null;
+  uploading.value = false;
+  fileInfo.status = "取消上传";
+  fileInfo.progressPercentage = 0;
 }
 
 function uploadProgress(e) {
