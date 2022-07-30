@@ -2,8 +2,8 @@
 
 ## 开发人员
 
-@wenisok  
-@iy88
+[@WenisOK](/Wenisok)  
+[@iy88](/iy88)
 
 ## 使用文档
 
