@@ -6,6 +6,7 @@ export default defineConfig({
   base: "./",
   plugins: [vue()],
   server: {
+    port: 8888,
     proxy: {
       "/upload": "http://localhost:2222",
       "/fileList": "http://localhost:2222",
