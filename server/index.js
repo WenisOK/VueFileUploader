@@ -10,8 +10,8 @@ let lastFileList = "";
 const filesPath = path.normalize(path.resolve(path.join(__dirname, "./files")));
 let fileList;
 try {
-  fileList = JSON.parse(fs.readFileSync(path.normalize(path.relsolve(path.join(__dirname,"./fileList.json")))));
-} catch {
+  fileList = JSON.parse(fs.readFileSync(path.normalize(path.resolve(path.join(__dirname,"./fileList.json")))));
+} catch{
   fileList = [];
 }
 // initialize files folder
