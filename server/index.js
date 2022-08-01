@@ -10,8 +10,8 @@ let lastFileList = "";
 const filesPath = path.normalize(path.resolve(path.join(__dirname, "./files")));
 let fileList;
 try {
-  fileList = JSON.parse(fs.readFileSync(path.normalize(path.resolve(path.join(__dirname,"./fileList.json")))));
-} catch{
+  fileList = JSON.parse(fs.readFileSync(path.normalize(path.resolve(path.join(__dirname, "./fileList.json")))));
+} catch {
   fileList = [];
 }
 // initialize files folder
@@ -54,7 +54,7 @@ app.post("/deleteFile", (req, res, next) => {
     }
     if (flag) {
       try {
-        fs.unlinkSync(path.normalize(path.resolve(path.join(filesPath`./${req.body.fileId}`))));
+        fs.unlinkSync(path.normalize(path.resolve(path.join(filesPath, `./${req.body.fileId}`))));
         fileList.splice(index, 1);
         res.send({ status: 1 });
       } catch (e) {
