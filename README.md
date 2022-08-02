@@ -13,17 +13,20 @@
 git clone https://github.com/WenisOK/VueFileUploader.git
 ```
 
-### 二、客户端
+### 二、使用开发环境运行
+
+1. 客户端
 
 ```shell
 cd ./client
 yarn
-#OR
+yarn dev
+#OR 或者
 npm i
-npx vite dev --host
+npm run dev
 ```
 
-### 三、服务端
+2. 服务端
 
 ```shell
 cd ./server
@@ -33,6 +36,22 @@ yarn serve
 npm i
 npm run serve
 ```
+
+### 三、使用 Nginx 转发
+
+1. 构建前端代码
+
+```shell
+cd ./client
+yarn
+yarn build
+#OR 或者
+npm i
+npm run build
+```
+
+2. 将`dist`解析到`nginx`的`location`里，确保能访问
+3. 配置如下的代理: `/upload`,`/fileList`,`/connTest`,`/deleteFile`,`/downloadFile`转发到`http://localhost:2222`
 
 ### 四、访问
 
