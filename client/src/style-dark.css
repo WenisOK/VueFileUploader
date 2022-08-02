@@ -1,0 +1,20 @@
+.FileUpload[mode="dark"] {
+  background-color: #2f2f2f;
+  box-shadow: none;
+}
+.FileUpload[mode="dark"] .fileTitle {
+  color: #fff;
+}
+.FileUpload[mode="dark"] .fileInfo div {
+  color: #fff;
+}
+.listsTable[mode="dark"] {
+  box-shadow: none !important;
+}
+.listsTable[mode="dark"] .el-table {
+  --el-table-border-color: #2b2b2b;
+  --el-fill-color-blank: #2f2f2f;
+  --el-text-color-secondary: #fff;
+  --el-table-text-color: #fff;
+  --el-bg-color: #2f2f2f;
+}

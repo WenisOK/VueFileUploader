@@ -1,9 +1,6 @@
 <template>
   <div>
-    <div class="topBar">
-      <div>文件上传</div>
-    </div>
-    <div class="FileUpload">
+    <div :mode="darkMode === true ? 'dark' : 'light'" class="FileUpload">
       <div class="fileTitle">文件信息</div>
       <input type="file" multiple ref="refInput" style="display: none" />
       <el-button
@@ -47,6 +44,16 @@ import { ref, onMounted, reactive } from "vue";
 import { DocumentAdd, Upload } from "@element-plus/icons-vue";
 import typeList from "../type";
 import axios from "axios";
+import { useClientStore } from "../store/client";
+
+const refUpload = ref(null);
+
+const darkMode = ref(false);
+
+const clientStore = useClientStore();
+clientStore.$subscribe((mutation, state) => {
+  darkMode.value = state.page.pageMode === "dark" ? true : false;
+});
 
 const fileInfo = reactive({
   name: "",
@@ -115,6 +122,7 @@ function upload() {
         uploading.value = false;
         fileInfo.status = "上传成功";
         refInput.value.value = "";
+        fileInfo.abortController = null;
         emit("updateFileList");
       }
     })

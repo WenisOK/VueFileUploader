@@ -16,6 +16,7 @@ body {
 .FileUpload {
   max-width: 520px;
   min-width: 370px;
+  width: 90%;
   margin: 50px auto;
   border-radius: 10px;
   box-shadow: 0 0 10px -6px gray;
@@ -64,6 +65,7 @@ body {
 .listsTable {
   max-width: 520px;
   min-width: 370px;
+  width: 90%;
   margin: 10px auto;
   border-radius: 10px;
   overflow: hidden;
@@ -80,4 +82,12 @@ body {
 
 a {
   text-decoration: none;
+}
+
+.el-progress__text span {
+  color: gray !important;
+}
+
+.el-switch {
+  --el-switch-off-color: gray !important;
 }

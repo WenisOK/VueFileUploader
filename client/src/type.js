@@ -28,8 +28,9 @@ export default {
   "application/vnd.ms-excel": "电子表格",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
     "电子表格",
-  "application/pdf": "PDF文件",
+  "application/pdf": "PDF文档",
   "text/xml": "XML文档",
   "application/x-zip-compressed": "ZIP压缩包",
   "audio/x-m4a": "M4A音频",
+  "video/quicktime": "MOV视频",
 };
