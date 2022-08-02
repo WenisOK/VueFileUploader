@@ -37,6 +37,10 @@ app.use((req, res, next) => {
   next()
 });
 
+app.all("/connTest",(req,res)=>{
+  res.send({status: 1})
+})
+
 app.get("/fileList", (req, res) => {
   res.send(fileList);
 });
