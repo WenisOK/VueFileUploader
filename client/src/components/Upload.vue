@@ -46,8 +46,6 @@ import typeList from "../type";
 import axios from "axios";
 import { useClientStore } from "../store/client";
 
-const refUpload = ref(null);
-
 const darkMode = ref(false);
 
 const clientStore = useClientStore();
@@ -68,13 +66,9 @@ const fileInfo = reactive({
 });
 
 const emit = defineEmits(["updateFileList"]);
-
 const refInput = ref();
 const uploading = ref(false);
 
-const chooseFile = () => {
-  refInput.value.click();
-};
 onMounted(() => {
   refInput.value.addEventListener("change", (e) => {
     let event = e.target.files[0];
@@ -90,6 +84,10 @@ onMounted(() => {
     }
   });
 });
+
+function chooseFile() {
+  refInput.value.click();
+}
 
 function upload() {
   if (refInput.value.files.length < 1) {

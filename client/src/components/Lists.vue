@@ -21,6 +21,7 @@
 </template>
 
 <script setup>
+// 引入模块
 import { onMounted, reactive, ref } from "vue";
 import axios from "axios";
 import Options from "./Options.vue";
@@ -32,8 +33,9 @@ defineExpose({
 });
 
 const tableData = reactive([]);
-
 let fileListBak = "";
+const darkMode = ref(false);
+const clientStore = useClientStore();
 
 function getFileList() {
   axios({
@@ -67,12 +69,11 @@ function getFileList() {
       }
     });
 }
-const darkMode = ref(false);
 
-const clientStore = useClientStore();
 clientStore.$subscribe((mutation, state) => {
   darkMode.value = state.page.pageMode === "dark" ? true : false;
 });
+
 onMounted(() => {
   getFileList();
   setInterval(() => getFileList(), 5000);
