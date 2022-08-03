@@ -77,7 +77,10 @@ onMounted(() => {
       fileInfo.size = event.size;
       fileInfo.type = event.type;
       fileInfo.lastModified = event.lastModified;
-      fileInfo.viewSize = (event.size / 1024 / 1024).toFixed(5) + "Mib";
+      fileInfo.viewSize =
+        event.size > 1073741824
+          ? (event.size / 1024 / 1024 / 1024).toFixed(2) + "GB"
+          : (event.size / 1024 / 1024).toFixed(2) + "MB";
       fileInfo.viewType = getFileTypes(event.type);
       fileInfo.status = "未开始";
       fileInfo.progressPercentage = 0;

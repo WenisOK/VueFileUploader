@@ -96,6 +96,6 @@ a {
   background-color: #409eff !important;
   border-color: #409eff !important;
 }
-.listsTable[mode="light"] .el-table__body tr.hover-row>td.el-table__cell {
-  background-color: #c2e0ff !important;
+.el-table {
+  --el-fill-color-light: #dceafc;
 }
