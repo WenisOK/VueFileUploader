@@ -18,3 +18,14 @@
   --el-table-text-color: #fff;
   --el-bg-color: #2f2f2f;
 }
+.listsTable[mode="dark"] .el-table__body tr.hover-row>td.el-table__cell {
+  background-color: #1d435c !important;
+}
+
+.FileUpload[mode="dark"] .el-progress-bar__inner {
+  background-color: #40ffba !important;
+}
+
+.FileUpload[mode="dark"] .el-progress-bar__outer{
+  background-color: #c1c1c1 !important;
+}

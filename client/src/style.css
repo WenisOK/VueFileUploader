@@ -69,7 +69,7 @@ body {
   margin: 10px auto;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 0 10px -6px gray;
+  box-shadow: 0 0 10px -6px #c1c1c1;
 }
 
 .listsTable * {
@@ -85,14 +85,17 @@ a {
 }
 
 .el-progress__text span {
-  color: gray !important;
+  color: #c1c1c1 !important;
 }
 
 .el-switch {
-  --el-switch-off-color: gray !important;
+  --el-switch-off-color: #c1c1c1 !important;
 }
 
 .el-button:focus {
   background-color: #409eff !important;
   border-color: #409eff !important;
+}
+.listsTable[mode="light"] .el-table__body tr.hover-row>td.el-table__cell {
+  background-color: #c2e0ff !important;
 }
