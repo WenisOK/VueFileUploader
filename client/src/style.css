@@ -91,3 +91,8 @@ a {
 .el-switch {
   --el-switch-off-color: gray !important;
 }
+
+.el-button:focus {
+  background-color: #409eff !important;
+  border-color: #409eff !important;
+}
