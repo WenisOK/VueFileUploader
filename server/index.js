@@ -80,7 +80,7 @@ app.get("/downloadFile", (req, res, next) => {
       res.setHeader("Content-type", "application/octet-stream");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename=${file.fileNameWithExt}`
+        `attachment; filename=${encodeURI(file.fileNameWithExt)}`
       );
       try {
         fs.createReadStream(path.normalize(path.resolve(path.join(filesPath, `./${req.query.fileId}`)))).pipe(res);
@@ -126,14 +126,12 @@ app.post("/upload", (req, res, next) => {
           headerCache.push(chunk.slice(0, headerEndIndex + 1));
           headerLength += headerEndIndex + 1;
           header = Buffer.concat(headerCache, headerLength);
-          // let fileDataChunk = chunk.slice(headerEndIndex + 1);
           let slices = header.toString().split("\r\n");
           needTransferLength = contentLength - endLineSignal.length - slices[0].length - "--".length - endLineSignal.length;
           fileName = slices[1].split("; ")[2].split(`="`)[1].slice(0, -1);
           fileType = slices[2].split(": ")[1];
           console.log(fileName, fileType);
           fileDataStream = fs.createWriteStream(path.normalize(path.resolve(path.join(filesPath, `./${fileId}`))), { flags: "w+" });
-          // fileDataStream.write(fileDataChunk);
           if (dataLength + chunk.length >= needTransferLength) {
             fileDataStream.write(chunk.slice(headerEndIndex + 1, needTransferLength - dataLength), e => {
               if (e) {
