@@ -4,6 +4,7 @@ const express = require("express");
 const fs = require("fs");
 const { randomUUID } = require("crypto");
 let app = express();
+const endLineSignal = Buffer.from("\r\n");
 
 // initialize fileList memory database
 let lastFileList = "";
@@ -37,8 +38,8 @@ app.use((req, res, next) => {
   next()
 });
 
-app.all("/connTest",(req,res)=>{
-  res.send({status: 1})
+app.all("/connTest", (req, res) => {
+  res.send({ status: 1 })
 })
 
 app.get("/fileList", (req, res) => {
@@ -95,73 +96,110 @@ app.get("/downloadFile", (req, res, next) => {
 });
 
 app.post("/upload", (req, res, next) => {
-  if (
-    req.query.filename &&
-    req.query.type &&
-    req.query.size &&
-    req.query.lastModified
-  ) {
+  if (req.query.lastModified) {
     let fileId = randomUUID();
-    let boundary = req.headers["content-type"]
-      .split("; ")[1]
-      .split("boundary=")[1];
-    const calcLength = (
-      + 2 + Buffer.from(boundary).length + 2 // --$boudary\r\n
-      + 55 + Buffer.from(req.query.filename).length + 1 + 2 // Content-Disposition: form-data; name="file"; filename="$filename"\r\n
-      + 14 + Buffer.from(req.query.type ? req.query.type : "application/octet-stream").length + 2 // Content-Type: $type\r\n
-      + 2 // \r\n
-    );
-
-    let recvBinaryLength = 0;
-    let recvFileLength = 0;
+    let contentLength = parseInt(req.headers["content-length"]);
+    let endLineSignalCount = 0;
+    let headerEndIndex = -1;
+    let headerCache = [];
+    let headerLength = 0;
+    let header;
+    let dataLength = 0;
+    let needTransferLength;
+    let fileName;
+    let fileType;
+    let fileDataStream;
     let recvFlag = true;
-    const stream = fs.createWriteStream(path.normalize(path.resolve(path.join(filesPath, `./${fileId}`))), { flags: "w+" });
-
-    req.on("data", (chunk) => {
+    req.on("data", chunk => {
       if (!recvFlag) return;
-      // recv data length not more than header data length
-      if (recvBinaryLength + chunk.length < calcLength) {
-        recvBinaryLength += chunk.length;
-      }
-      // recv data length more than or equal header data length
-      else if (recvBinaryLength + chunk.length >= calcLength) {
-        let start = chunk.length - (recvBinaryLength + chunk.length - calcLength - recvFileLength); // more than header data length index and not recv progress
-        let end = recvBinaryLength + chunk.length >= calcLength + parseInt(req.query.size) ?
-          chunk.length - (recvBinaryLength + chunk.length - calcLength - parseInt(req.query.size)) :
-          undefined;
-        let piece = chunk.slice(start, end);
-        recvFileLength += piece.length;
-        recvBinaryLength += chunk.length;
-        stream.write(piece, e => {
-          if (e) {
-            recvFlag = false;
-            next(e);
+      if (headerEndIndex === -1) {
+        for (let i = 0; i < chunk.length - 1; i++) {
+          if (chunk[i] === endLineSignal[0] && chunk[i + 1] === endLineSignal[1]) {
+            endLineSignalCount++;
+            if (endLineSignalCount === 4) {
+              headerEndIndex = i + 1;
+              break;
+            }
           }
-        });
+        }
+        if (headerEndIndex > -1) {
+          headerCache.push(chunk.slice(0, headerEndIndex + 1));
+          headerLength += headerEndIndex + 1;
+          header = Buffer.concat(headerCache, headerLength);
+          // let fileDataChunk = chunk.slice(headerEndIndex + 1);
+          let slices = header.toString().split("\r\n");
+          needTransferLength = contentLength - endLineSignal.length - slices[0].length - "--".length - endLineSignal.length;
+          fileName = slices[1].split("; ")[2].split(`="`)[1].slice(0, -1);
+          fileType = slices[2].split(": ")[1];
+          console.log(fileName, fileType);
+          fileDataStream = fs.createWriteStream(path.normalize(path.resolve(path.join(filesPath, `./${fileId}`))), { flags: "w+" });
+          // fileDataStream.write(fileDataChunk);
+          if (dataLength + chunk.length >= needTransferLength) {
+            fileDataStream.write(chunk.slice(headerEndIndex + 1, needTransferLength - dataLength), e => {
+              if (e) {
+                recvFlag = false;
+                next(e);
+              }
+            });
+          } else {
+            fileDataStream.write(chunk.slice(headerEndIndex + 1), e => {
+              if (e) {
+                recvFlag = false;
+                next(e);
+              }
+            });
+          }
+        } else {
+          headerCache.push(chunk);
+          headerLength += chunk.length;
+        }
+      } else {
+        if (dataLength + chunk.length >= needTransferLength) {
+          fileDataStream.write(chunk.slice(0, needTransferLength - dataLength), e => {
+            if (e) {
+              recvFlag = false;
+              next(e);
+            }
+          });
+        } else {
+          fileDataStream.write(chunk.slice(0), e => {
+            if (e) {
+              recvFlag = false;
+              next(e);
+            }
+          });
+        }
       }
-    });
-
-    req.on("error", () => {
-      // request is canceled or request is aborted
-      stream.end();
-      fs.unlinkSync(path.normalize(path.resolve(path.join(filesPath, `./${fileId}`))));
+      dataLength += chunk.length;
     });
 
     req.on("end", () => {
       if (!recvFlag) return;
-      stream.end();
+      fileDataStream.end();
       fileList.push({
         fileId: fileId,
-        fileNameWithExt: req.query.filename,
-        type: req.query.type,
+        fileNameWithExt: fileName,
+        type: fileType,
         lastModified: parseInt(req.query.lastModified),
       });
       res.send({ status: 1 });
     });
+
+    req.on("error", () => {
+      // request is canceled or request is aborted
+      fileDataStream.end();
+      fs.unlinkSync(path.normalize(path.resolve(path.join(filesPath, `./${fileId}`))), e => {
+        if (e) {
+          recvFlag = false;
+          next(e);
+        }
+      });
+    });
+
   } else {
     res.send({ status: -999 });
   }
-});
+})
 
 app.use((req, res) => {
   res.status(404);
