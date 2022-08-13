@@ -88,9 +88,13 @@ app.get("/downloadFile", (req, res, next) => {
         next(e);
       }
     } else {
+      res.setHeader("Content-type", "text/html");
+      res.removeHeader("Content-Disposition");
       res.send("<h2>no such file</h2>");
     }
   } else {
+    res.setHeader("Content-type", "text/html");
+    res.removeHeader("Content-Disposition");
     res.send("<h2>fileId required</h2>");
   }
 });
